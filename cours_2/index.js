@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const mestouches = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
 
@@ -89,15 +90,13 @@ monUpdater();
 
 const mouse = new THREE.Vector2();
 
-window.addEventListener('mousemove', function(ev) {
-  // La formule : (Position / Taille Totale) * 2 - 1
-  mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
+// window.addEventListener('mousemove', function(ev) {
+//   mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+//   mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
 
-  // On multiplie par un facteur (ici 5) pour que le mouvement soit visible à l'écran
-  moncube.position.x = mouse.x * 5;
-  moncube.position.y = mouse.y * 5;
-});
+//   moncube.position.x = mouse.x * 5;
+//   moncube.position.y = mouse.y * 5;
+// });
 
 // Écouteurs pour détecter les touches pressées et relâchées
 // window.addEventListener("keydown", (event) => {
@@ -111,3 +110,15 @@ window.addEventListener('mousemove', function(ev) {
 //     mestouches[event.key] = false;
 //   }
 // });
+
+//
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+camera.position.set(0, 3, 10);
+controls.update();
+
+function animate() {
+	controls.update();
+	renderer.render( scene, camera );
+}
