@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+const mestouches = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+
 
 // Render & scene
 const renderer = new THREE.WebGLRenderer({canvas});
@@ -74,6 +76,36 @@ function monUpdater(){
     moncube.rotation.y += 0.015;
     renderer.render(scene,camera);
     requestAnimationFrame(monUpdater);
+
+    if (mestouches.ArrowUp) {
+        moncube.position.z -= 0.1;
+    }
+    if (mestouches.ArrowDown) {
+        moncube.position.z += 0.1;
+    }
+    if (mestouches.ArrowLeft) {
+        moncube.position.x -= 0.1;
+    }
+    if (mestouches.ArrowRight) {
+        moncube.position.x += 0.1;
+    }
 }
 
 monUpdater();
+
+
+//
+
+
+// Écouteurs pour détecter les touches pressées et relâchées
+window.addEventListener('keydown', (event) => {
+  if (mestouches.hasOwnProperty(event.key)) {
+    mestouches[event.key] = true;
+  }
+});
+
+window.addEventListener('keyup', (event) => {
+  if (mestouches.hasOwnProperty(event.key)) {
+    mestouches[event.key] = false;
+  }
+});
