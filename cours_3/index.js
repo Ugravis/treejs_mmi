@@ -24,6 +24,7 @@ scene.add(light)
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
 directionalLight.position.set(5, 5, 5)
+directionalLight.castShadow = true
 scene.add(directionalLight)
 
 // Plan
@@ -42,9 +43,18 @@ scene.add(plane)
 const clock = new THREE.Clock()
 const loader = new GLTFLoader()
 let mixer
+let model
 
 loader.load('./assets/punchAnimation.glb', function (gltf) {
-    const model = gltf.scene
+    model = gltf.scene
+
+    model.traverse(function (node) {
+      if (node.isMesh) {
+        node.castShadow = true
+        node.receiveShadow = true
+      }
+    })
+
     scene.add(model)
 
     if (gltf.animations && gltf.animations.length > 0) {
@@ -81,3 +91,39 @@ function loop() {
 const controls = new OrbitControls(camera, renderer.domElement)
 camera.position.set(0, 3, 10)
 controls.update()
+
+
+/* Gestion clic / toggle */
+
+
+const raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
+
+const geometry = new THREE.SphereGeometry(0.5)
+const material = new THREE.MeshStandardMaterial({ color: 0xffffff })
+const toggleCube = new THREE.Mesh(geometry, material)
+toggleCube.position.y = 1
+toggleCube.position.x = 2
+toggleCube.castShadow = true
+scene.add(toggleCube)
+
+window.addEventListener('click', onMouseClick)
+
+function onMouseClick(event) {
+  // Normaliser la position de la souris (de -1 à 1)
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObject(model)
+
+  if (intersects.length > 0) {
+    if(toggleCube.visible == false){
+      toggleCube.visible = true;
+    }
+    else{
+      toggleCube.visible = false;
+    }
+
+  }
+}
